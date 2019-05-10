@@ -1,4 +1,4 @@
-const inlineSvgFonts = require('./font-inliner');
+const inlineSvgFontsAsync = require('./font-inliner');
 const SvgElement = require('./svg-element');
 const convertFonts = require('./font-converter');
 const fixupSvgString = require('./fixup-svg-string');
@@ -351,19 +351,32 @@ class SvgRenderer {
     }
 
     /**
+     * 注入字体改成异步，所以拆分为两个函数实现begin
+     */
+    /**
      * Serialize the active SVG DOM to a string.
      * @param {?boolean} shouldInjectFonts True if fonts should be included in the SVG as
      *     base64 data.
      * @returns {string} String representing current SVG data.
      */
-    toString (shouldInjectFonts) {
+    toStringShouldInjectFonts () {
         const serializer = new XMLSerializer();
         let string = serializer.serializeToString(this._svgDom);
-        if (shouldInjectFonts) {
-            string = inlineSvgFonts(string);
-        }
-        return string;
+        return inlineSvgFontsAsync(string);
     }
+    
+    /**
+     * Serialize the active SVG DOM to a string.
+     * @returns {string} String representing current SVG data.
+     */
+    toString () {
+      const serializer = new XMLSerializer();
+      let string = serializer.serializeToString(this._svgDom);
+      return string;
+    }
+    /**
+     * 注入字体改成异步，所以拆分为两个函数实现 end
+     */
 
     /**
      * Get the drawing ratio, adjusted for HiDPI screens.
@@ -394,8 +407,9 @@ class SvgRenderer {
                 this._cachedImage = img;
                 this._drawFromImage(scale, onFinish);
             };
-            const svgText = this.toString(true /* shouldInjectFonts */);
-            img.src = `data:image/svg+xml;utf8,${encodeURIComponent(svgText)}`;
+            this.toStringShouldInjectFonts(/* shouldInjectFonts */).then((svgText)=>{
+              img.src = `data:image/svg+xml;utf8,${encodeURIComponent(svgText)}`;
+            });
         }
     }
 

@@ -17,7 +17,6 @@ const base = {
         rules: [{
             include: [
                 path.resolve('src'),
-                path.resolve('node_modules', 'scratch-render-fonts')
             ],
             test: /\.js$/,
             loader: 'babel-loader',
@@ -44,6 +43,12 @@ module.exports = [
                 {
                     from: 'src/playground'
                 }
+            ]),
+            new CopyWebpackPlugin([
+              {
+                  from: 'src/ttf',
+                  to: 'static/svg-fonts'
+              }
             ])
         ])
     }),
@@ -63,6 +68,14 @@ module.exports = [
         },
         optimization: {
             minimize: process.env.NODE_ENV === 'production'
-        }
+        },
+        plugins: base.plugins.concat([
+          new CopyWebpackPlugin([
+              {
+                  from: 'src/ttf',
+                  to: 'static/svg-fonts'
+              }
+          ])
+        ])
     })
 ];

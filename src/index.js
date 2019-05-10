@@ -1,6 +1,6 @@
 const SVGRenderer = require('./svg-renderer');
 const BitmapAdapter = require('./bitmap-adapter');
-const inlineSvgFonts = require('./font-inliner');
+const inlineSvgFontsAsync = require('./font-inliner');
 const SvgElement = require('./svg-element');
 const convertFonts = require('./font-converter');
 // /**
@@ -10,7 +10,7 @@ const convertFonts = require('./font-converter');
 module.exports = {
     BitmapAdapter: BitmapAdapter,
     convertFonts: convertFonts,
-    inlineSvgFonts: inlineSvgFonts,
+    inlineSvgFontsAsync: inlineSvgFontsAsync,
     SvgElement: SvgElement,
     SVGRenderer: SVGRenderer
 };
