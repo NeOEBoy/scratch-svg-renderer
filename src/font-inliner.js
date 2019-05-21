@@ -6,7 +6,6 @@
 const base64js = require('base64-js');
 
 let fontLoadStatus = 'unloaded';
-let loadedChecker = undefined;
 const FONTS = {
   'Sans Serif': 'NotoSans-Medium.ttf',
   'Serif': 'SourceSerifPro-Regular.otf',
@@ -54,12 +53,12 @@ const loadFontAsync = () => {
     // console.log('loadFontAsync loaded')
     return Promise.resolve();
   } else if (fontLoadStatus === 'loading') {
-    // 如果当前正在加载资源，则循环检测是否加载完成
+    // 如果当前正在加载资源，开启循环检测是否加载完成
     // console.log('loadFontAsync loading')
     const waitP = () => {
-      return new Promise((resolve) =>
-      loadedChecker = setInterval(() => {
-        // console.log('loadFontAsync 法第三发发')
+      return new Promise((resolve) => {
+        let loadedChecker = setInterval(() => {
+          // console.log('loadFontAsync interval')
           if (fontLoadStatus === 'loading') {
             // console.log('loadFontAsync again')
           } else {
@@ -69,7 +68,7 @@ const loadFontAsync = () => {
             resolve();
           }
         }, 100)
-      )
+      })
     }
 
     return waitP();
