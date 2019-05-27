@@ -177,6 +177,12 @@ const loadFontAsync = () => {
 // };
 
 const inlineSvgFontsAsync = (svgString) => {
+  // Make it clear that this function only operates on strings.
+  // If we don't explicitly throw this here, the function silently fails.
+  if (typeof svgString !== 'string') {
+    throw new Error('SVG to be inlined is not a string');
+  }
+
   // Collect fonts that need injection.
   const fontsNeeded = new Set();
   const fontRegex = /font-family="([^"]*)"/g;
@@ -191,12 +197,10 @@ const inlineSvgFontsAsync = (svgString) => {
       for (const font of fontsNeeded) {
         if (FONTS.hasOwnProperty(font)) {
           str += `${FONTS[font]}`;
-          // console.log(`${FONTS[font]}`);
         }
       }
       str += '</style></defs>';
       svgString = svgString.replace(/<svg[^>]*>/, `$&${str}`);
-      // console.log('inlineSvgFonts end svgString = ' + svgString)
       return Promise.resolve(svgString);
     });
   }
